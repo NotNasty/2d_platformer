@@ -1,6 +1,7 @@
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using TMPro;
 
 public class Player : MonoBehaviour
 {
@@ -13,6 +14,7 @@ public class Player : MonoBehaviour
 	public float sneakCoefficient;
 	public float shiftCoefficient;
 	public float animationSlowDown;
+	public TMP_Text coinsText;
 
 	public bool IsInDeathZone { get; set; }
 
@@ -26,6 +28,7 @@ public class Player : MonoBehaviour
 	private Rigidbody2D rb2d;
 	private Animator animator;
 	private Vector3 defaultPosition;
+
 	private void Start()
 	{
 		spriteRenderer = GetComponent<SpriteRenderer>();
@@ -73,6 +76,8 @@ public class Player : MonoBehaviour
 
 		animator.SetBool(PARAMETER_IS_GROUNDED, isGrounded);
 		animator.SetFloat(PARAMETER_MAGNITUDE, rb2d.velocity.magnitude);
+
+		coinsText.text = coins.ToString();
 	}
 
 	private void FixedUpdate()
