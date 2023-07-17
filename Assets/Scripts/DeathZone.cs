@@ -8,11 +8,17 @@ public class DeathZone : MonoBehaviour
 
 	private void OnTriggerEnter2D(Collider2D collision)
 	{
-		player.IsInDeathZone = true;
+		if (collision.CompareTag("Player"))
+		{
+			player.IsInDeathZone = true;
+		}
 	}
 
 	private void OnTriggerExit2D(Collider2D collision)
 	{
-		player.IsInDeathZone = false;
+		if (collision.CompareTag("Player"))
+		{
+			player.IsInDeathZone = false;
+		}
 	}
 }
