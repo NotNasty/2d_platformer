@@ -4,6 +4,8 @@ using UnityEngine;
 
 public class Enemy : MonoBehaviour
 {
+	public float damage;
+
 	public Transform[] points;
 	public float speedAttack;
 	public float speedIdle;
@@ -85,8 +87,10 @@ public class Enemy : MonoBehaviour
 	{
 		if (collision.gameObject.CompareTag("Player"))
 		{
-			//damage
-			if (!cooldown) 
+			collision.gameObject.GetComponent<Player>().Damage(damage);
+
+
+			if (!cooldown)
 			{
 				cooldown = true;
 				StartCoroutine(CooldownTimer());

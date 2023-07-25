@@ -1,10 +1,14 @@
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using UnityEngine.SceneManagement;
+using UnityEngine.UI;
 using TMPro;
 
 public class Player : MonoBehaviour
 {
+	public float maxHealth;
+	public float healthVisualSpeed;
 	public float coins;
 	public float speed;
 	private float addForce;
@@ -14,7 +18,10 @@ public class Player : MonoBehaviour
 	public float sneakCoefficient;
 	public float shiftCoefficient;
 	public float animationSlowDown;
+	public GameObject bulletPrefab;
+
 	public TMP_Text coinsText;
+	public Image healthImage;
 
 	public bool IsInDeathZone { get; set; }
 
@@ -23,6 +30,8 @@ public class Player : MonoBehaviour
 	private const string GROUND_TAG_NAME = "Ground";
 	private const float defaultAnimationSpeed = 1;
 
+	private float health;
+	private float healthVisual;
 	private bool isGrounded;
 	private SpriteRenderer spriteRenderer;
 	private Rigidbody2D rb2d;
@@ -35,6 +44,8 @@ public class Player : MonoBehaviour
 		rb2d = GetComponent<Rigidbody2D>();
 		animator = GetComponent<Animator>();
 		defaultPosition = transform.position;
+		health = maxHealth;
+		healthVisual = health;
 	}
 
 	private void Update()
@@ -65,6 +76,12 @@ public class Player : MonoBehaviour
 			
 		}
 
+		if (Input.GetMouseButtonDown(0))
+		{
+			GameObject newBullet = Instantiate(bulletPrefab, transform.position, Quaternion.identity, null);
+			newBullet.GetComponent<Bullet>().targetPosition = Camera.main.ScreenToWorldPoint(Input.mousePosition);
+		}
+
 		if (Input.GetAxis("Horizontal") > 0)
 		{
 			spriteRenderer.flipX = false;
@@ -78,6 +95,9 @@ public class Player : MonoBehaviour
 		animator.SetFloat(PARAMETER_MAGNITUDE, rb2d.velocity.magnitude);
 
 		coinsText.text = coins.ToString();
+
+		healthVisual = Mathf.Lerp(healthVisual, health, healthVisualSpeed);
+		healthImage.fillAmount = healthVisual / maxHealth;
 	}
 
 	private void FixedUpdate()
@@ -105,7 +125,17 @@ public class Player : MonoBehaviour
 			rb2d.velocity.y);
 	}
 
-	IEnumerator addForceTimer()
+	public void Damage(float damage)
+	{
+		health -= damage;
+
+		if (health <= 0)
+		{
+			SceneManager.LoadScene(SceneManager.GetActiveScene().buildIndex);
+		}
+	}
+
+	private IEnumerator addForceTimer()
 	{
 		yield return new WaitForSeconds(0.2f);
 		addForce = 0;
